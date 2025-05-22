@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\SubTransaction;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -9,8 +10,7 @@ class TransactionController extends Controller
 {
     public function index()
     {
-        $transactions = Transaction::all();
-        
+        $transactions = Transaction::with('subTransactions')->get();
         $balance = Transaction::where('type', 'income')->sum('amount') - 
                   Transaction::where('type', 'expense')->sum('amount');
 
@@ -51,16 +51,30 @@ class TransactionController extends Controller
             'type' => 'required|in:income,expense',
             'category' => 'nullable|string|max:255',
             'payment_type' => 'nullable|string|max:255',
-            'date' => 'required|date'
+            'date' => 'required|date',
+            'sub_amounts.*' => 'nullable|numeric|min:0',
+            'sub_categories.*' => 'nullable|string|max:255'
         ]);
 
-        Transaction::create([
+        $transaction = Transaction::create([
             'amount' => $request->amount,
             'type' => $request->type,
             'category' => $request->category,
             'payment_type' => $request->payment_type,
             'date' => $request->date
         ]);
+
+        if ($request->sub_amounts && $request->sub_categories) {
+            foreach ($request->sub_amounts as $index => $sub_amount) {
+                if ($sub_amount && $request->sub_categories[$index]) {
+                    SubTransaction::create([
+                        'transaction_id' => $transaction->id,
+                        'amount' => $sub_amount,
+                        'category' => $request->sub_categories[$index]
+                    ]);
+                }
+            }
+        }
 
         return redirect()->route('tracker.index')->with('success', 'Транзакция добавлена!');
     }

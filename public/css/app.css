@@ -5,14 +5,15 @@
 .btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    background-color: #10b981;
+    background-color: #10b981; 
 }
 .btn-income {
-    background-color: #34d399;
+    background-color: #34d399; 
 }
 .btn-expense {
-    background-color: #f87171;
+    background-color: #f87171; 
 }
+
 
 .transaction-row {
     animation: slideIn 0.5s ease;
@@ -22,6 +23,7 @@
     to { opacity: 1; transform: translateX(0); }
 }
 
+
 .card {
     transition: all 0.3s ease;
 }
@@ -29,6 +31,7 @@
     transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
+
 
 .sub-transaction {
     display: none;
