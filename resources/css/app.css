@@ -5,13 +5,12 @@
 .btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    background-color: #10b981;
 }
-.btn-income {
-    background-color: #34d399;
+.btn-confirm {
+    background-color: #0d9488; 
 }
-.btn-expense {
-    background-color: #f87171;
+.btn-confirm:hover {
+    background-color: #0f766e;
 }
 
 .transaction-row {
@@ -26,13 +25,5 @@
     transition: all 0.3s ease;
 }
 .card:hover {
-    transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.sub-transaction {
-    display: none;
-}
-.sub-transaction.active {
-    display: block;
 }

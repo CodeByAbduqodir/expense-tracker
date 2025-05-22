@@ -5,172 +5,182 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
-<body class="bg-gray-100 font-sans">
-    <div class="container mx-auto p-6 max-w-4xl">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Expense Tracker</h1>
+<body class="bg-gradient-to-br from-emerald-100 to-teal-200 font-sans min-h-screen flex flex-col">
+    <header class="bg-teal-800 text-white shadow-lg">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-extrabold drop-shadow-md">
+                <i class="fas fa-wallet mr-2 text-teal-300"></i> Expense Tracker
+            </h1>
+            <nav>
+                <ul class="flex space-x-6">
+                    <li>
+                        <a href="#add-transaction" class="hover:text-teal-300 transition-colors duration-200 flex items-center">
+                            <i class="fas fa-plus-circle mr-1"></i> Добавить транзакцию
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#transactions" class="hover:text-teal-300 transition-colors duration-200 flex items-center">
+                            <i class="fas fa-list-ul mr-1"></i> Транзакции
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-        <div class="card bg-white p-6 rounded-lg shadow-lg mb-6">
-            <h2 class="text-2xl font-semibold text-gray-700">Баланс: <span class="text-emerald-600">${{ number_format($balance, 2) }}</span></h2>
+    <main class="container mx-auto p-6 max-w-4xl flex-grow">
+        <div class="card bg-white p-6 rounded-xl shadow-2xl mb-6 transform hover:scale-105 transition-transform duration-300">
+            <h2 class="text-2xl font-semibold text-gray-700">
+                <i class="fas fa-dollar-sign mr-2 text-emerald-600"></i> 
+                Баланс: <span class="text-emerald-600 font-bold">${{ number_format($balance, 2) }}</span>
+            </h2>
         </div>
 
-        <div class="card bg-white p-6 rounded-lg shadow-lg mb-6">
+        <div id="add-transaction" class="card bg-white p-6 rounded-xl shadow-2xl mb-6">
             <form id="transaction-form" action="{{ route('tracker.store') }}" method="POST">
                 @csrf
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-gray-700">Сумма</label>
+                        <label class="block text-gray-700 font-medium">
+                            <i class="fas fa-coins mr-1 text-yellow-500"></i> Сумма
+                        </label>
                         <input type="number" name="amount" step="0.01" required
-                               class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                               class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200">
                     </div>
                     <div>
-                        <label class="block text-gray-700">Тип</label>
+                        <label class="block text-gray-700 font-medium">
+                            <i class="fas fa-exchange-alt mr-1 text-blue-500"></i> Тип операции
+                        </label>
                         <select name="type" id="type" required
-                                class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                            <option value="income">+</option>
-                            <option value="expense">-</option>
+                                class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200">
+                            <option value="income">Income</option>
+                            <option value="expense">Expense</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-gray-700">Категория</label>
+                        <label class="block text-gray-700 font-medium">
+                            <i class="fas fa-tag mr-1 text-purple-500"></i> Категория
+                        </label>
                         <input type="text" name="category" placeholder="Например, Покупки"
-                               class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                               class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200">
                     </div>
                     <div>
-                        <label class="block text-gray-700">Тип оплаты</label>
-                        <input type="text" name="payment_type" placeholder="Например, Наличные"
-                               class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <label class="block text-gray-700 font-medium">
+                            <i class="fas fa-credit-card mr-1 text-green-500"></i> Тип оплаты
+                        </label>
+                        <select name="payment_type" required
+                                class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200">
+                            <option value="cash">Наличными</option>
+                            <option value="card">Картой</option>
+                            <option value="bank_transfer">Банковским переводом</option>
+                        </select>
                     </div>
                     <div>
-                        <label class="block text-gray-700">Дата</label>
+                        <label class="block text-gray-700 font-medium">
+                            <i class="fas fa-calendar-alt mr-1 text-red-500"></i> Дата
+                        </label>
                         <input type="date" name="date" required value="{{ date('Y-m-d') }}"
-                               class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                               class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200">
                     </div>
                 </div>
-                <div id="sub-transactions" class="sub-transaction mt-4">
-                    <h4 class="text-gray-700 mb-2">Разбить расход</h4>
-                    <div id="sub-transaction-fields">
-                        <div class="grid grid-cols-2 gap-4 mb-2">
-                            <input type="number" name="sub_amounts[]" step="0.01" placeholder="Сумма"
-                                   class="p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                            <input type="text" name="sub_categories[]" placeholder="Категория, например, Молоко"
-                                   class="p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        </div>
-                    </div>
-                    <button type="button" id="add-sub-transaction"
-                            class="text-emerald-600 hover:text-emerald-800">+ Добавить подкатегорию</button>
-                </div>
-                <div class="mt-4 flex space-x-4">
-                    <button type="submit" name="type" value="income"
-                            class="btn btn-income text-white px-4 py-2 rounded-md">Добавить доход (+)</button>
-                    <button type="submit" name="type" value="expense"
-                            class="btn btn-expense text-white px-4 py-2 rounded-md">Добавить расход (-)</button>
+                <div class="mt-6 flex space-x-4 justify-center">
+                    <button type="submit"
+                            class="btn btn-confirm bg-teal-600 text-white px-6 py-2 rounded-md hover:bg-teal-700 flex items-center">
+                        <i class="fas fa-check-circle mr-2"></i> Подтвердить
+                    </button>
                 </div>
             </form>
             @if (session('success'))
-                <div class="mt-4 text-emerald-600 font-semibold">{{ session('success') }}</div>
+                <div class="mt-4 text-emerald-600 font-semibold flex items-center">
+                    <i class="fas fa-check mr-2"></i> {{ session('success') }}
+                </div>
             @endif
         </div>
 
-        <div class="card bg-white p-6 rounded-lg shadow-lg mb-6">
-            <h3 class="text-xl font-semibold text-gray-700 mb-4">Статистика</h3>
+        <div class="card bg-white p-6 rounded-xl shadow-2xl mb-6 transform hover:scale-105 transition-transform duration-300">
+            <h3 class="text-xl font-semibold text-gray-700 mb-4">
+                <i class="fas fa-chart-bar mr-2 text-indigo-600"></i> Статистика
+            </h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="p-4 bg-emerald-100 rounded-md">
-                    <p class="text-gray-700">Ежедневно</p>
+                <div class="p-4 bg-emerald-50 rounded-md hover:bg-emerald-100 transition-colors duration-200">
+                    <p class="text-gray-700 font-medium">Ежедневно</p>
                     <p>Доходы: <span class="font-semibold text-emerald-600">${{ number_format($daily['income'], 2) }}</span></p>
                     <p>Расходы: <span class="font-semibold text-red-600">${{ number_format($daily['expense'], 2) }}</span></p>
                 </div>
-                <div class="p-4 bg-emerald-100 rounded-md">
-                    <p class="text-gray-700">Еженедельно</p>
+                <div class="p-4 bg-emerald-50 rounded-md hover:bg-emerald-100 transition-colors duration-200">
+                    <p class="text-gray-700 font-medium">Еженедельно</p>
                     <p>Доходы: <span class="font-semibold text-emerald-600">${{ number_format($weekly['income'], 2) }}</span></p>
                     <p>Расходы: <span class="font-semibold text-red-600">${{ number_format($weekly['expense'], 2) }}</span></p>
                 </div>
-                <div class="p-4 bg-emerald-100 rounded-md">
-                    <p class="text-gray-700">Ежемесячно</p>
+                <div class="p-4 bg-emerald-50 rounded-md hover:bg-emerald-100 transition-colors duration-200">
+                    <p class="text-gray-700 font-medium">Ежемесячно</p>
                     <p>Доходы: <span class="font-semibold text-emerald-600">${{ number_format($monthly['income'], 2) }}</span></p>
                     <p>Расходы: <span class="font-semibold text-red-600">${{ number_format($monthly['expense'], 2) }}</span></p>
                 </div>
             </div>
         </div>
 
-        <!-- Список транзакций -->
-        <div class="card bg-white p-6 rounded-lg shadow-lg">
-            <h3 class="text-xl font-semibold text-gray-700 mb-4">Транзакции</h3>
-            <table class="w-full">
-                <thead>
-                    <tr class="bg-gray-200">
-                        <th class="p-3 text-left">Сумма</th>
-                        <th class="p-3 text-left">Тип</th>
-                        <th class="p-3 text-left">Категория</th>
-                        <th class="p-3 text-left">Тип оплаты</th>
-                        <th class="p-3 text-left">Дата</th>
-                        <th class="p-3 text-left">Подкатегории</th>
-                    </tr>
-                </thead>
-                <tbody id="transactions-table">
-                    @foreach ($transactions as $transaction)
-                        <tr class="transaction-row">
-                            <td class="p-3">${{ number_format($transaction->amount, 2) }}</td>
-                            <td class="p-3">{{ $transaction->type == 'income' ? '+' : '-' }}</td>
-                            <td class="p-3">{{ $transaction->category ?? '-' }}</td>
-                            <td class="p-3">{{ $transaction->payment_type ?? '-' }}</td>
-                            <td class="p-3">{{ $transaction->date }}</td>
-                            <td class="p-3">
-                                @if ($transaction->subTransactions)
-                                    <ul>
-                                        @foreach ($transaction->subTransactions as $sub)
-                                            <li>{{ $sub->category }}: ${{ number_format($sub->amount, 2) }}</li>
-                                        @endforeach
-                                    </ul>
-                                @else
-                                    -
-                                @endif
-                            </td>
-                        </tr>
+        <div id="transactions" class="card bg-white p-6 rounded-xl shadow-2xl">
+            <h3 class="text-xl font-semibold text-gray-700 mb-4">
+                <i class="fas fa-list-ul mr-2 text-teal-600"></i> Транзакции
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <div class="bg-emerald-50 p-4 rounded-lg shadow-md">
+                    <h4 class="text-lg font-semibold text-emerald-700 mb-3">
+                        <i class="fas fa-arrow-up mr-2 text-emerald-600"></i> Доходы
+                    </h4>
+                    @foreach ($transactions->where('type', 'income') as $transaction)
+                        <div class="transaction-row bg-white p-3 mb-2 rounded-md shadow-sm hover:bg-emerald-100 transition-colors duration-200">
+                            <p><strong>Сумма:</strong> ${{ number_format($transaction->amount, 2) }}</p>
+                            <p><strong>Категория:</strong> {{ $transaction->category ?? '-' }}</p>
+                            <p><strong>Оплата:</strong> {{ $transaction->payment_type == 'cash' ? 'Наличными' : ($transaction->payment_type == 'card' ? 'Картой' : 'Банковским переводом') }}</p>
+                            <p><strong>Дата:</strong> {{ $transaction->date }}</p>
+                        </div>
                     @endforeach
-                </tbody>
-            </table>
+                </div>
+                <div class="bg-red-50 p-4 rounded-lg shadow-md">
+                    <h4 class="text-lg font-semibold text-red-700 mb-3">
+                        <i class="fas fa-arrow-down mr-2 text-red-600"></i> Расходы
+                    </h4>
+                    @foreach ($transactions->where('type', 'expense') as $transaction)
+                        <div class="transaction-row bg-white p-3 mb-2 rounded-md shadow-sm hover:bg-red-100 transition-colors duration-200">
+                            <p><strong>Сумма:</strong> ${{ number_format($transaction->amount, 2) }}</p>
+                            <p><strong>Категория:</strong> {{ $transaction->category ?? '-' }}</p>
+                            <p><strong>Оплата:</strong> {{ $transaction->payment_type == 'cash' ? 'Наличными' : ($transaction->payment_type == 'card' ? 'Картой' : 'Банковским переводом') }}</p>
+                            <p><strong>Дата:</strong> {{ $transaction->date }}</p>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
         </div>
-    </div>
+    </main>
+
+    <footer class="bg-teal-800 text-white py-4 mt-auto">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-sm">
+                © 2025 CodeByAbduqodir. All rights reserved.
+                <a href="https://github.com/CodeByAbduqodir" target="_blank" class="hover:text-teal-300 transition-colors duration-200 ml-2">
+                    <i class="fab fa-github mr-1"></i> GitHub
+                </a>
+            </p>
+        </div>
+    </footer>
 
     <script>
         document.getElementById('transaction-form').addEventListener('submit', function (e) {
-            const buttons = document.querySelectorAll('button[type="submit"]');
-            buttons.forEach(button => {
-                button.addEventListener('click', function () {
-                    document.querySelector('select[name="type"]').value = this.value;
-                });
-            });
-
             setTimeout(() => {
-                const table = document.getElementById('transactions-table');
-                const newRow = table.querySelector('tr:first-child');
+                const incomeColumn = document.querySelector('.bg-emerald-50');
+                const expenseColumn = document.querySelector('.bg-red-50');
+                const newRow = incomeColumn.querySelector('.transaction-row') || expenseColumn.querySelector('.transaction-row');
                 if (newRow) {
                     newRow.classList.add('transaction-row');
                 }
             }, 1000);
         });
-
-        const typeSelect = document.getElementById('type');
-        const subTransactions = document.getElementById('sub-transactions');
-        typeSelect.addEventListener('change', function () {
-            subTransactions.classList.toggle('active', this.value === 'expense');
-        });
-
-        document.getElementById('add-sub-transaction').addEventListener('click', function () {
-            const container = document.getElementById('sub-transaction-fields');
-            const newFields = document.createElement('div');
-            newFields.className = 'grid grid-cols-2 gap-4 mb-2';
-            newFields.innerHTML = `
-                <input type="number" name="sub_amounts[]" step="0.01" placeholder="Сумма"
-                       class="p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                <input type="text" name="sub_categories[]" placeholder="Категория, например, Молоко"
-                       class="p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
-            `;
-            container.appendChild(newFields);
-        });
     </script>
 </body>
 </html>
-```
