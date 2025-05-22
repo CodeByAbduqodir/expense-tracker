@@ -18,12 +18,12 @@
                 <ul class="flex space-x-6">
                     <li>
                         <a href="#add-transaction" class="hover:text-teal-300 transition-colors duration-200 flex items-center">
-                            <i class="fas fa-plus-circle mr-1"></i> Добавить транзакцию
+                            <i class="fas fa-plus-circle mr-1"></i> Add Transaction
                         </a>
                     </li>
                     <li>
                         <a href="#transactions" class="hover:text-teal-300 transition-colors duration-200 flex items-center">
-                            <i class="fas fa-list-ul mr-1"></i> Транзакции
+                            <i class="fas fa-list-ul mr-1"></i> Transactions
                         </a>
                     </li>
                 </ul>
@@ -35,7 +35,7 @@
         <div class="card bg-white p-6 rounded-xl shadow-2xl mb-6 transform hover:scale-105 transition-transform duration-300">
             <h2 class="text-2xl font-semibold text-gray-700">
                 <i class="fas fa-dollar-sign mr-2 text-emerald-600"></i> 
-                Баланс: <span class="text-emerald-600 font-bold">${{ number_format($balance, 2) }}</span>
+                Balance: <span class="text-emerald-600 font-bold">${{ number_format($balance, 2) }}</span>
             </h2>
         </div>
 
@@ -45,14 +45,14 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-gray-700 font-medium">
-                            <i class="fas fa-coins mr-1 text-yellow-500"></i> Сумма
+                            <i class="fas fa-coins mr-1 text-yellow-500"></i> Amount
                         </label>
                         <input type="number" name="amount" step="0.01" required
                                class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200">
                     </div>
                     <div>
                         <label class="block text-gray-700 font-medium">
-                            <i class="fas fa-exchange-alt mr-1 text-blue-500"></i> Тип операции
+                            <i class="fas fa-exchange-alt mr-1 text-blue-500"></i> Operation Type
                         </label>
                         <select name="type" id="type" required
                                 class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200">
@@ -62,25 +62,25 @@
                     </div>
                     <div>
                         <label class="block text-gray-700 font-medium">
-                            <i class="fas fa-tag mr-1 text-purple-500"></i> Категория
+                            <i class="fas fa-tag mr-1 text-purple-500"></i> Category
                         </label>
-                        <input type="text" name="category" placeholder="Например, Покупки"
+                        <input type="text" name="category" placeholder="e.g., Shopping"
                                class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200">
                     </div>
                     <div>
                         <label class="block text-gray-700 font-medium">
-                            <i class="fas fa-credit-card mr-1 text-green-500"></i> Тип оплаты
+                            <i class="fas fa-credit-card mr-1 text-green-500"></i> Payment Type
                         </label>
                         <select name="payment_type" required
                                 class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200">
-                            <option value="cash">Наличными</option>
-                            <option value="card">Картой</option>
-                            <option value="bank_transfer">Банковским переводом</option>
+                            <option value="cash">Cash</option>
+                            <option value="card">Card</option>
+                            <option value="bank_transfer">Bank Transfer</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-gray-700 font-medium">
-                            <i class="fas fa-calendar-alt mr-1 text-red-500"></i> Дата
+                            <i class="fas fa-calendar-alt mr-1 text-red-500"></i> Date
                         </label>
                         <input type="date" name="date" required value="{{ date('Y-m-d') }}"
                                class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200">
@@ -89,7 +89,7 @@
                 <div class="mt-6 flex space-x-4 justify-center">
                     <button type="submit"
                             class="btn btn-confirm bg-teal-600 text-white px-6 py-2 rounded-md hover:bg-teal-700 flex items-center">
-                        <i class="fas fa-check-circle mr-2"></i> Подтвердить
+                        <i class="fas fa-check-circle mr-2"></i> Confirm
                     </button>
                 </div>
             </form>
@@ -102,56 +102,56 @@
 
         <div class="card bg-white p-6 rounded-xl shadow-2xl mb-6 transform hover:scale-105 transition-transform duration-300">
             <h3 class="text-xl font-semibold text-gray-700 mb-4">
-                <i class="fas fa-chart-bar mr-2 text-indigo-600"></i> Статистика
+                <i class="fas fa-chart-bar mr-2 text-indigo-600"></i> Statistics
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="p-4 bg-emerald-50 rounded-md hover:bg-emerald-100 transition-colors duration-200">
-                    <p class="text-gray-700 font-medium">Ежедневно</p>
-                    <p>Доходы: <span class="font-semibold text-emerald-600">${{ number_format($daily['income'], 2) }}</span></p>
-                    <p>Расходы: <span class="font-semibold text-red-600">${{ number_format($daily['expense'], 2) }}</span></p>
+                    <p class="text-gray-700 font-medium">Daily</p>
+                    <p>Income: <span class="font-semibold text-emerald-600">${{ number_format($daily['income'], 2) }}</span></p>
+                    <p>Expense: <span class="font-semibold text-red-600">${{ number_format($daily['expense'], 2) }}</span></p>
                 </div>
                 <div class="p-4 bg-emerald-50 rounded-md hover:bg-emerald-100 transition-colors duration-200">
-                    <p class="text-gray-700 font-medium">Еженедельно</p>
-                    <p>Доходы: <span class="font-semibold text-emerald-600">${{ number_format($weekly['income'], 2) }}</span></p>
-                    <p>Расходы: <span class="font-semibold text-red-600">${{ number_format($weekly['expense'], 2) }}</span></p>
+                    <p class="text-gray-700 font-medium">Weekly</p>
+                    <p>Income: <span class="font-semibold text-emerald-600">${{ number_format($weekly['income'], 2) }}</span></p>
+                    <p>Expense: <span class="font-semibold text-red-600">${{ number_format($weekly['expense'], 2) }}</span></p>
                 </div>
                 <div class="p-4 bg-emerald-50 rounded-md hover:bg-emerald-100 transition-colors duration-200">
-                    <p class="text-gray-700 font-medium">Ежемесячно</p>
-                    <p>Доходы: <span class="font-semibold text-emerald-600">${{ number_format($monthly['income'], 2) }}</span></p>
-                    <p>Расходы: <span class="font-semibold text-red-600">${{ number_format($monthly['expense'], 2) }}</span></p>
+                    <p class="text-gray-700 font-medium">Monthly</p>
+                    <p>Income: <span class="font-semibold text-emerald-600">${{ number_format($monthly['income'], 2) }}</span></p>
+                    <p>Expense: <span class="font-semibold text-red-600">${{ number_format($monthly['expense'], 2) }}</span></p>
                 </div>
             </div>
         </div>
 
         <div id="transactions" class="card bg-white p-6 rounded-xl shadow-2xl">
             <h3 class="text-xl font-semibold text-gray-700 mb-4">
-                <i class="fas fa-list-ul mr-2 text-teal-600"></i> Транзакции
+                <i class="fas fa-list-ul mr-2 text-teal-600"></i> Transactions
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
                 <div class="bg-emerald-50 p-4 rounded-lg shadow-md">
                     <h4 class="text-lg font-semibold text-emerald-700 mb-3">
-                        <i class="fas fa-arrow-up mr-2 text-emerald-600"></i> Доходы
+                        <i class="fas fa-arrow-up mr-2 text-emerald-600"></i> Income
                     </h4>
                     @foreach ($transactions->where('type', 'income') as $transaction)
                         <div class="transaction-row bg-white p-3 mb-2 rounded-md shadow-sm hover:bg-emerald-100 transition-colors duration-200">
-                            <p><strong>Сумма:</strong> ${{ number_format($transaction->amount, 2) }}</p>
-                            <p><strong>Категория:</strong> {{ $transaction->category ?? '-' }}</p>
-                            <p><strong>Оплата:</strong> {{ $transaction->payment_type == 'cash' ? 'Наличными' : ($transaction->payment_type == 'card' ? 'Картой' : 'Банковским переводом') }}</p>
-                            <p><strong>Дата:</strong> {{ $transaction->date }}</p>
+                            <p><strong>Amount:</strong> ${{ number_format($transaction->amount, 2) }}</p>
+                            <p><strong>Category:</strong> {{ $transaction->category ?? '-' }}</p>
+                            <p><strong>Payment:</strong> {{ $transaction->payment_type == 'cash' ? 'Cash' : ($transaction->payment_type == 'card' ? 'Card' : 'Bank Transfer') }}</p>
+                            <p><strong>Date:</strong> {{ $transaction->date }}</p>
                         </div>
                     @endforeach
                 </div>
                 <div class="bg-red-50 p-4 rounded-lg shadow-md">
                     <h4 class="text-lg font-semibold text-red-700 mb-3">
-                        <i class="fas fa-arrow-down mr-2 text-red-600"></i> Расходы
+                        <i class="fas fa-arrow-down mr-2 text-red-600"></i> Expenses
                     </h4>
                     @foreach ($transactions->where('type', 'expense') as $transaction)
                         <div class="transaction-row bg-white p-3 mb-2 rounded-md shadow-sm hover:bg-red-100 transition-colors duration-200">
-                            <p><strong>Сумма:</strong> ${{ number_format($transaction->amount, 2) }}</p>
-                            <p><strong>Категория:</strong> {{ $transaction->category ?? '-' }}</p>
-                            <p><strong>Оплата:</strong> {{ $transaction->payment_type == 'cash' ? 'Наличными' : ($transaction->payment_type == 'card' ? 'Картой' : 'Банковским переводом') }}</p>
-                            <p><strong>Дата:</strong> {{ $transaction->date }}</p>
+                            <p><strong>Amount:</strong> ${{ number_format($transaction->amount, 2) }}</p>
+                            <p><strong>Category:</strong> {{ $transaction->category ?? '-' }}</p>
+                            <p><strong>Payment:</strong> {{ $transaction->payment_type == 'cash' ? 'Cash' : ($transaction->payment_type == 'card' ? 'Card' : 'Bank Transfer') }}</p>
+                            <p><strong>Date:</strong> {{ $transaction->date }}</p>
                         </div>
                     @endforeach
                 </div>
