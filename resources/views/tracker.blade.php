@@ -52,7 +52,7 @@
                     </div>
                     <div>
                         <label class="block text-gray-700 font-medium">
-                            <i class="fas fa-exchange-alt mr-1 text-blue-500"></i> Operation Type
+                            <i class="fas fa-exchange-alt mr-1 text-blue-500"></i> Type of operation
                         </label>
                         <select name="type" id="type" required
                                 class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200">
@@ -64,7 +64,7 @@
                         <label class="block text-gray-700 font-medium">
                             <i class="fas fa-tag mr-1 text-purple-500"></i> Category
                         </label>
-                        <input type="text" name="category" placeholder="e.g., Shopping"
+                        <input type="text" name="category" placeholder="e.g. Shopping"
                                class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200">
                     </div>
                     <div>
@@ -128,7 +128,6 @@
                 <i class="fas fa-list-ul mr-2 text-teal-600"></i> Transactions
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
                 <div class="bg-emerald-50 p-4 rounded-lg shadow-md">
                     <h4 class="text-lg font-semibold text-emerald-700 mb-3">
                         <i class="fas fa-arrow-up mr-2 text-emerald-600"></i> Income
@@ -139,12 +138,15 @@
                             <p><strong>Category:</strong> {{ $transaction->category ?? '-' }}</p>
                             <p><strong>Payment:</strong> {{ $transaction->payment_type == 'cash' ? 'Cash' : ($transaction->payment_type == 'card' ? 'Card' : 'Bank Transfer') }}</p>
                             <p><strong>Date:</strong> {{ $transaction->date }}</p>
+                            <button class="delete-btn text-red-600 hover:text-red-800 mt-2 flex items-center" data-id="{{ $transaction->id }}">
+                                <i class="fas fa-trash mr-1"></i> Delete
+                            </button>
                         </div>
                     @endforeach
                 </div>
                 <div class="bg-red-50 p-4 rounded-lg shadow-md">
                     <h4 class="text-lg font-semibold text-red-700 mb-3">
-                        <i class="fas fa-arrow-down mr-2 text-red-600"></i> Expenses
+                        <i class="fas fa-arrow-down mr-2 text-red-600"></i> Expense
                     </h4>
                     @foreach ($transactions->where('type', 'expense') as $transaction)
                         <div class="transaction-row bg-white p-3 mb-2 rounded-md shadow-sm hover:bg-red-100 transition-colors duration-200">
@@ -152,6 +154,9 @@
                             <p><strong>Category:</strong> {{ $transaction->category ?? '-' }}</p>
                             <p><strong>Payment:</strong> {{ $transaction->payment_type == 'cash' ? 'Cash' : ($transaction->payment_type == 'card' ? 'Card' : 'Bank Transfer') }}</p>
                             <p><strong>Date:</strong> {{ $transaction->date }}</p>
+                            <button class="delete-btn text-red-600 hover:text-red-800 mt-2 flex items-center" data-id="{{ $transaction->id }}">
+                                <i class="fas fa-trash mr-1"></i> Delete
+                            </button>
                         </div>
                     @endforeach
                 </div>
@@ -163,7 +168,7 @@
         <div class="container mx-auto px-6 text-center">
             <p class="text-sm">
                 © 2025 CodeByAbduqodir. All rights reserved.
-                <a href="https://github.com/CodeByAbduqodir" target="_blank" class="hover:text-teal-300 transition-colors duration-200 ml-2">
+                <a href="https://github.com/CodeByAbduqodir/expense-tracker" target="_blank" class="hover:text-teal-300 transition-colors duration-200 ml-2">
                     <i class="fab fa-github mr-1"></i> GitHub
                 </a>
             </p>
@@ -180,6 +185,38 @@
                     newRow.classList.add('transaction-row');
                 }
             }, 1000);
+        });
+
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const id = this.getAttribute('data-id');
+                if (confirm('Delete this transaction?')) {
+                    fetch(`/api/transactions/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            this.closest('.transaction-row').remove();
+                            alert('Transaction deleted!');
+                            fetch('/api/balance')
+                                .then(res => res.json())
+                                .then(data => {
+                                    document.querySelector('.text-emerald-600.font-bold').textContent = `$${data.data.balance}`;
+                                });
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        alert('Error deleting transaction');
+                        console.error(error);
+                    });
+                }
+            });
         });
     </script>
 </body>

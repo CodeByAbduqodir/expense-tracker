@@ -61,6 +61,6 @@ class TransactionController extends Controller
             'date' => $request->date
         ]);
 
-        return redirect()->route('tracker.index')->with('success', 'Транзакция добавлена!');
+        return redirect()->route('tracker.index')->with('success', 'Transaction added!');
     }
 }
