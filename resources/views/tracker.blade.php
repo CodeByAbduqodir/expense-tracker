@@ -32,10 +32,21 @@
     </header>
 
     <main class="container mx-auto p-6 max-w-4xl flex-grow">
+        @if (session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 flex items-center">
+                <i class="fas fa-exclamation-triangle mr-2"></i> {{ session('error') }}
+            </div>
+        @endif
+        @if (session('success'))
+            <div class="bg-emerald-100 border border-emerald-400 text-emerald-700 px-4 py-3 rounded mb-4 flex items-center">
+                <i class="fas fa-check mr-2"></i> {{ session('success') }}
+            </div>
+        @endif
+
         <div class="card bg-white p-6 rounded-xl shadow-2xl mb-6 transform hover:scale-105 transition-transform duration-300">
             <h2 class="text-2xl font-semibold text-gray-700">
                 <i class="fas fa-dollar-sign mr-2 text-emerald-600"></i> 
-                Balance: <span class="text-emerald-600 font-bold">${{ number_format($balance, 2) }}</span>
+                Balance: <span class="text-emerald-600 font-bold">${{ number_format($balance ?? 0, 2) }}</span>
             </h2>
         </div>
 
@@ -48,16 +59,17 @@
                             <i class="fas fa-coins mr-1 text-yellow-500"></i> Amount
                         </label>
                         <input type="number" name="amount" step="0.01" required
-                               class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200">
+                               class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200"
+                               value="{{ old('amount') }}">
                     </div>
                     <div>
                         <label class="block text-gray-700 font-medium">
-                            <i class="fas fa-exchange-alt mr-1 text-blue-500"></i> Type of operation
+                            <i class="fas fa-exchange-alt mr-1 text-blue-500"></i> Type
                         </label>
                         <select name="type" id="type" required
                                 class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200">
-                            <option value="income">Income</option>
-                            <option value="expense">Expense</option>
+                            <option value="income" {{ old('type') == 'income' ? 'selected' : '' }}>Income</option>
+                            <option value="expense" {{ old('type') == 'expense' ? 'selected' : '' }}>Expense</option>
                         </select>
                     </div>
                     <div>
@@ -65,7 +77,8 @@
                             <i class="fas fa-tag mr-1 text-purple-500"></i> Category
                         </label>
                         <input type="text" name="category" placeholder="e.g. Shopping"
-                               class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200">
+                               class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200"
+                               value="{{ old('category') }}">
                     </div>
                     <div>
                         <label class="block text-gray-700 font-medium">
@@ -73,31 +86,27 @@
                         </label>
                         <select name="payment_type" required
                                 class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200">
-                            <option value="cash">Cash</option>
-                            <option value="card">Card</option>
-                            <option value="bank_transfer">Bank Transfer</option>
+                            <option value="cash" {{ old('payment_type') == 'cash' ? 'selected' : '' }}>Cash</option>
+                            <option value="card" {{ old('payment_type') == 'card' ? 'selected' : '' }}>Card</option>
+                            <option value="bank_transfer" {{ old('payment_type') == 'bank_transfer' ? 'selected' : '' }}>Bank Transfer</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-gray-700 font-medium">
                             <i class="fas fa-calendar-alt mr-1 text-red-500"></i> Date
                         </label>
-                        <input type="date" name="date" required value="{{ date('Y-m-d') }}"
-                               class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200">
+                        <input type="date" name="date" required
+                               class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200"
+                               value="{{ old('date') ?? date('Y-m-d') }}">
                     </div>
                 </div>
                 <div class="mt-6 flex space-x-4 justify-center">
                     <button type="submit"
-                            class="btn btn-confirm bg-teal-600 text-white px-6 py-2 rounded-md hover:bg-teal-700 flex items-center">
+                            class="bg-teal-600 text-white px-6 py-2 rounded-md hover:bg-teal-700 flex items-center transition-colors duration-200">
                         <i class="fas fa-check-circle mr-2"></i> Confirm
                     </button>
                 </div>
             </form>
-            @if (session('success'))
-                <div class="mt-4 text-emerald-600 font-semibold flex items-center">
-                    <i class="fas fa-check mr-2"></i> {{ session('success') }}
-                </div>
-            @endif
         </div>
 
         <div class="card bg-white p-6 rounded-xl shadow-2xl mb-6 transform hover:scale-105 transition-transform duration-300">
@@ -107,18 +116,18 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="p-4 bg-emerald-50 rounded-md hover:bg-emerald-100 transition-colors duration-200">
                     <p class="text-gray-700 font-medium">Daily</p>
-                    <p>Income: <span class="font-semibold text-emerald-600">${{ number_format($daily['income'], 2) }}</span></p>
-                    <p>Expense: <span class="font-semibold text-red-600">${{ number_format($daily['expense'], 2) }}</span></p>
+                    <p>Income: <span class="font-semibold text-emerald-600">${{ number_format($stats['daily']['income'] ?? 0, 2) }}</span></p>
+                    <p>Expense: <span class="font-semibold text-red-600">${{ number_format($stats['daily']['expense'] ?? 0, 2) }}</span></p>
                 </div>
                 <div class="p-4 bg-emerald-50 rounded-md hover:bg-emerald-100 transition-colors duration-200">
                     <p class="text-gray-700 font-medium">Weekly</p>
-                    <p>Income: <span class="font-semibold text-emerald-600">${{ number_format($weekly['income'], 2) }}</span></p>
-                    <p>Expense: <span class="font-semibold text-red-600">${{ number_format($weekly['expense'], 2) }}</span></p>
+                    <p>Income: <span class="font-semibold text-emerald-600">${{ number_format($stats['weekly']['income'] ?? 0, 2) }}</span></p>
+                    <p>Expense: <span class="font-semibold text-red-600">${{ number_format($stats['weekly']['expense'] ?? 0, 2) }}</span></p>
                 </div>
                 <div class="p-4 bg-emerald-50 rounded-md hover:bg-emerald-100 transition-colors duration-200">
                     <p class="text-gray-700 font-medium">Monthly</p>
-                    <p>Income: <span class="font-semibold text-emerald-600">${{ number_format($monthly['income'], 2) }}</span></p>
-                    <p>Expense: <span class="font-semibold text-red-600">${{ number_format($monthly['expense'], 2) }}</span></p>
+                    <p>Income: <span class="font-semibold text-emerald-600">${{ number_format($stats['monthly']['income'] ?? 0, 2) }}</span></p>
+                    <p>Expense: <span class="font-semibold text-red-600">${{ number_format($stats['monthly']['expense'] ?? 0, 2) }}</span></p>
                 </div>
             </div>
         </div>
@@ -132,33 +141,39 @@
                     <h4 class="text-lg font-semibold text-emerald-700 mb-3">
                         <i class="fas fa-arrow-up mr-2 text-emerald-600"></i> Income
                     </h4>
-                    @foreach ($transactions->where('type', 'income') as $transaction)
+                    @forelse ($transactions->where('type', 'income') as $transaction)
                         <div class="transaction-row bg-white p-3 mb-2 rounded-md shadow-sm hover:bg-emerald-100 transition-colors duration-200">
                             <p><strong>Amount:</strong> ${{ number_format($transaction->amount, 2) }}</p>
                             <p><strong>Category:</strong> {{ $transaction->category ?? '-' }}</p>
-                            <p><strong>Payment:</strong> {{ $transaction->payment_type == 'cash' ? 'Cash' : ($transaction->payment_type == 'card' ? 'Card' : 'Bank Transfer') }}</p>
+                            <p><strong>Payment:</strong> {{ ucfirst($transaction->payment_type) }}</p>
                             <p><strong>Date:</strong> {{ $transaction->date }}</p>
-                            <button class="delete-btn text-red-600 hover:text-red-800 mt-2 flex items-center" data-id="{{ $transaction->id }}">
+                            <button class="delete-btn text-red-600 hover:text-red-800 mt-2 flex items-center"
+                                    data-id="{{ $transaction->id }}">
                                 <i class="fas fa-trash mr-1"></i> Delete
                             </button>
                         </div>
-                    @endforeach
+                    @empty
+                        <p class="text-gray-500">No income transactions yet.</p>
+                    @endforelse
                 </div>
                 <div class="bg-red-50 p-4 rounded-lg shadow-md">
                     <h4 class="text-lg font-semibold text-red-700 mb-3">
                         <i class="fas fa-arrow-down mr-2 text-red-600"></i> Expense
                     </h4>
-                    @foreach ($transactions->where('type', 'expense') as $transaction)
+                    @forelse ($transactions->where('type', 'expense') as $transaction)
                         <div class="transaction-row bg-white p-3 mb-2 rounded-md shadow-sm hover:bg-red-100 transition-colors duration-200">
                             <p><strong>Amount:</strong> ${{ number_format($transaction->amount, 2) }}</p>
                             <p><strong>Category:</strong> {{ $transaction->category ?? '-' }}</p>
-                            <p><strong>Payment:</strong> {{ $transaction->payment_type == 'cash' ? 'Cash' : ($transaction->payment_type == 'card' ? 'Card' : 'Bank Transfer') }}</p>
+                            <p><strong>Payment:</strong> {{ ucfirst($transaction->payment_type) }}</p>
                             <p><strong>Date:</strong> {{ $transaction->date }}</p>
-                            <button class="delete-btn text-red-600 hover:text-red-800 mt-2 flex items-center" data-id="{{ $transaction->id }}">
+                            <button class="delete-btn text-red-600 hover:text-red-800 mt-2 flex items-center"
+                                    data-id="{{ $transaction->id }}">
                                 <i class="fas fa-trash mr-1"></i> Delete
                             </button>
                         </div>
-                    @endforeach
+                    @empty
+                        <p class="text-gray-500">No expense transactions yet.</p>
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -177,20 +192,33 @@
 
     <script>
         document.getElementById('transaction-form').addEventListener('submit', function (e) {
-            setTimeout(() => {
-                const incomeColumn = document.querySelector('.bg-emerald-50');
-                const expenseColumn = document.querySelector('.bg-red-50');
-                const newRow = incomeColumn.querySelector('.transaction-row') || expenseColumn.querySelector('.transaction-row');
-                if (newRow) {
-                    newRow.classList.add('transaction-row');
+            e.preventDefault();
+            fetch(this.action, {
+                method: 'POST',
+                body: new FormData(this),
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 }
-            }, 1000);
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to add transaction'));
+                }
+            })
+            .catch(error => {
+                alert('Error submitting transaction');
+                console.error(error);
+            });
         });
 
         document.querySelectorAll('.delete-btn').forEach(button => {
-            button.addEventListener('click', function () {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
                 const id = this.getAttribute('data-id');
-                if (confirm('Delete this transaction?')) {
+                if (confirm('Are you sure you want to delete this transaction?')) {
                     fetch(`/api/transactions/${id}`, {
                         method: 'DELETE',
                         headers: {
@@ -199,14 +227,14 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.status === 'success') {
+                        if (data.success) {
                             this.closest('.transaction-row').remove();
-                            alert('Transaction deleted!');
                             fetch('/api/balance')
                                 .then(res => res.json())
                                 .then(data => {
-                                    document.querySelector('.text-emerald-600.font-bold').textContent = `$${data.data.balance}`;
+                                    document.querySelector('.text-emerald-600.font-bold').textContent = `$${data.balance.toFixed(2)}`;
                                 });
+                            alert('Transaction deleted successfully!');
                         } else {
                             alert('Error: ' + data.message);
                         }
