@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Expense Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -102,7 +103,7 @@
                 </div>
                 <div class="mt-6 flex space-x-4 justify-center">
                     <button type="submit"
-                            class="bg-teal-600 text-white px-6 py-2 rounded-md hover:bg-teal-700 flex items-center transition-colors duration-200">
+                            class="btn btn-confirm bg-teal-600 text-white px-6 py-2 rounded-md hover:bg-teal-700 flex items-center transition-colors duration-200">
                         <i class="fas fa-check-circle mr-2"></i> Confirm
                     </button>
                 </div>
@@ -193,23 +194,25 @@
     <script>
         document.getElementById('transaction-form').addEventListener('submit', function (e) {
             e.preventDefault();
+            const formData = new FormData(this);
             fetch(this.action, {
                 method: 'POST',
-                body: new FormData(this),
+                body: formData,
                 headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 }
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    alert(data.message);
                     location.reload();
                 } else {
                     alert('Error: ' + (data.message || 'Failed to add transaction'));
                 }
             })
             .catch(error => {
-                alert('Error submitting transaction');
+                alert('Error submitting transaction: ' + error.message);
                 console.error(error);
             });
         });
@@ -222,7 +225,7 @@
                     fetch(`/api/transactions/${id}`, {
                         method: 'DELETE',
                         headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                         }
                     })
                     .then(response => response.json())
@@ -240,7 +243,7 @@
                         }
                     })
                     .catch(error => {
-                        alert('Error deleting transaction');
+                        alert('Error deleting transaction: ' + error.message);
                         console.error(error);
                     });
                 }

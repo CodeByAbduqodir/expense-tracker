@@ -11,36 +11,36 @@ class TransactionController extends Controller
     {
         $transactions = Transaction::all();
         $balance = Transaction::where('type', 'income')->sum('amount') - 
-                  Transaction::where('type', 'expense')->sum('amount');
+                Transaction::where('type', 'expense')->sum('amount');
 
-        $daily = [
-            'income' => Transaction::where('type', 'income')
-                ->whereDate('date', Carbon::today())
-                ->sum('amount'),
-            'expense' => Transaction::where('type', 'expense')
-                ->whereDate('date', Carbon::today())
-                ->sum('amount')
+        $stats = [
+            'daily' => [
+                'income' => Transaction::where('type', 'income')
+                    ->whereDate('date', Carbon::today())
+                    ->sum('amount'),
+                'expense' => Transaction::where('type', 'expense')
+                    ->whereDate('date', Carbon::today())
+                    ->sum('amount')
+            ],
+            'weekly' => [
+                'income' => Transaction::where('type', 'income')
+                    ->whereBetween('date', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+                    ->sum('amount'),
+                'expense' => Transaction::where('type', 'expense')
+                    ->whereBetween('date', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+                    ->sum('amount')
+            ],
+            'monthly' => [
+                'income' => Transaction::where('type', 'income')
+                    ->whereBetween('date', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
+                    ->sum('amount'),
+                'expense' => Transaction::where('type', 'expense')
+                    ->whereBetween('date', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
+                    ->sum('amount')
+            ]
         ];
 
-        $weekly = [
-            'income' => Transaction::where('type', 'income')
-                ->whereBetween('date', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
-                ->sum('amount'),
-            'expense' => Transaction::where('type', 'expense')
-                ->whereBetween('date', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
-                ->sum('amount')
-        ];
-
-        $monthly = [
-            'income' => Transaction::where('type', 'income')
-                ->whereBetween('date', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
-                ->sum('amount'),
-            'expense' => Transaction::where('type', 'expense')
-                ->whereBetween('date', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
-                ->sum('amount')
-        ];
-
-        return view('tracker', compact('transactions', 'balance', 'daily', 'weekly', 'monthly'));
+        return view('tracker', compact('transactions', 'balance', 'stats'));
     }
 
     public function store(Request $request)
@@ -53,7 +53,7 @@ class TransactionController extends Controller
             'date' => 'required|date',
         ]);
 
-        Transaction::create([
+        $transaction = Transaction::create([
             'amount' => $request->amount,
             'type' => $request->type,
             'category' => $request->category,
@@ -61,7 +61,11 @@ class TransactionController extends Controller
             'date' => $request->date
         ]);
 
-        return redirect()->route('tracker.index')->with('success', 'Transaction added!');
+        return response()->json([
+            'success' => true,
+            'message' => 'Transaction added!',
+            'transaction' => $transaction
+        ]);
     }
     public function destroy($id)
     {
